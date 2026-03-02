@@ -10,12 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.dkcdev.task_management_api.organizations.models.Organization;
+import me.dkcdev.task_management_api.tasks.enums.Status;
 import me.dkcdev.task_management_api.users.models.User;
 
 @Entity(name = "tasks")
@@ -40,7 +40,10 @@ public class Task {
     @JoinColumn(name = "organizationId")
     private Organization owner;
 
-    @OneToOne
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "userId")
     private User createdBy;
+
+    @Column
+    private Status status;
 }
