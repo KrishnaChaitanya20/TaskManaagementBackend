@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import me.dkcdev.task_management_api.auth.dtos.LoginDto;
 import me.dkcdev.task_management_api.auth.dtos.RegisterDto;
 import me.dkcdev.task_management_api.auth.dtos.RegisterOrgDto;
 import me.dkcdev.task_management_api.auth.emuns.Roles;
@@ -47,5 +48,18 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("token", token));
+     }
+
+
+     @PostMapping("/login")
+     public ResponseEntity<Map<String,String>> login(@RequestBody LoginDto body){
+        String token;
+        try {
+            token = authService.login(body.email(), body.password());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("reason", e.getReason()));
+        }
+
+        return ResponseEntity.ok().body(Map.of("token", token));
      }
 }

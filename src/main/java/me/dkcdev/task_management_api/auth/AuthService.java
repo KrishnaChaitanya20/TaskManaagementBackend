@@ -2,6 +2,7 @@ package me.dkcdev.task_management_api.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +22,8 @@ public class AuthService {
     private UserService userService;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    BCryptPasswordEncoder encoder;
 
     @Transactional
     public String registerOrg(String organizationName, String email, String name, String password) {
@@ -32,7 +35,7 @@ public class AuthService {
         }
 
         Organization org = this.orgService.createOrganization(organizationName);
-        User user = this.userService.createUser(email, name, password, org, Roles.ADMIN);
+        User user = this.userService.createUser(email, name,  encoder.encode(password), org, Roles.ADMIN);
 
         return jwtService.generateToken(user);
     }
@@ -46,8 +49,17 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with this email already exists");
         }
 
-        User user = this.userService.createUser(email, name, password, org, role);
+        User user = this.userService.createUser(email, name, encoder.encode(password), org, role);
 
+        return jwtService.generateToken(user);
+    }
+
+    public String login(String email, String password) {
+        User user =  userService.findByEmail(email);
+        if(user == null || !encoder.matches(password, user.getPassword())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        }
+        
         return jwtService.generateToken(user);
     }
 }
