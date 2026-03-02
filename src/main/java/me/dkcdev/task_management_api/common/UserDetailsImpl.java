@@ -2,6 +2,7 @@ package me.dkcdev.task_management_api.common;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,6 +31,18 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() {
         return user.getEmail();
+    }
+
+    public UUID getUserID(){
+        return user.getUserId();
+    }
+
+    public UUID getOrganizationID(){
+        return user.getOrganization().getOrganizationId();
+    }
+
+    public User getUser(){
+        return this.user;
     }
     
     
