@@ -37,7 +37,6 @@ public class AuthController {
 
      @PostMapping("/register")
      public ResponseEntity<Map<String,String>> register(@RequestBody RegisterDto body){
-        System.out.println(body);
         String token;
         Roles role;
         try {
