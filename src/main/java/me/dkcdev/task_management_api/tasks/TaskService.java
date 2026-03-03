@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import me.dkcdev.task_management_api.common.UserDetailsImpl;
 import me.dkcdev.task_management_api.tasks.dtos.CreateTaskDto;
+import me.dkcdev.task_management_api.tasks.dtos.UpdateTaskDto;
 import me.dkcdev.task_management_api.tasks.enums.Status;
 import me.dkcdev.task_management_api.tasks.models.Task;
 import me.dkcdev.task_management_api.users.models.User;
+import java.util.UUID;
 
 @Service
 public class TaskService {
@@ -33,12 +35,6 @@ public class TaskService {
     public Task createTask(CreateTaskDto payload) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = ((UserDetailsImpl) auth.getPrincipal()).getUser();
-        
-        // Organization org = orgRepo.findById(userDetails.getOrganizationID())
-        //         .orElseThrow(() -> new EntityNotFoundException("Organization not found"));
-
-        // User user = userRepo.findById(userDetails.getUserID())
-        //         .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Task task = Task.builder()
                 .title(payload.title())
@@ -47,6 +43,16 @@ public class TaskService {
                 .createdBy(user)
                 .status(payload.status() == null ? Status.TODO : payload.status())
                 .build();
+
+        return taskRepo.save(task);
+    }
+
+    public Task updateTask(UUID id, UpdateTaskDto payload) {
+        Task task = taskRepo.findById(id).orElseThrow();
+
+        task.setTitle(payload.title() == null ? task.getTitle() : payload.title());
+        task.setDescription(payload.description() == null ? task.getDescription() : payload.description());
+        task.setStatus(payload.status() == null ? task.getStatus() : payload.status());
 
         return taskRepo.save(task);
     }
