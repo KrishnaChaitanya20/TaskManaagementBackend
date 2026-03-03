@@ -25,7 +25,9 @@ public class TaskService {
     }
 
     public List<Task> getAllTasks() {
-        return taskRepo.findAll();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = ((UserDetailsImpl) auth.getPrincipal()).getUser();
+        return taskRepo.findByOwner_OrganizationId(user.getOrganization().getOrganizationId());
     }
 
     public Task createTask(CreateTaskDto payload) {

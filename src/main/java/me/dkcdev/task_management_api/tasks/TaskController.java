@@ -24,8 +24,8 @@ public class TaskController {
     }
 
     @GetMapping()
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<TaskResponseDto> getAllTasks() {
+        return taskService.getAllTasks().stream().map(TaskResponseDto::fromTask).toList();
     }
 
     @PostMapping()
