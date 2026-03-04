@@ -56,4 +56,10 @@ public class TaskService {
 
         return taskRepo.save(task);
     }
+
+    public boolean deleteTask(UUID id) {
+        Task task = taskRepo.findById(id).orElseThrow();
+        taskRepo.delete(task);
+        return true;
+    }
 }
